@@ -16,35 +16,19 @@ import (
 	"unicode/utf8"
 
 	"golang.org/x/tools/go/packages"
-)
 
-type arrFlags []string
+	"github.com/anjmao/go2proto/cmd/cli"
+)
 
 const outputFileName = "output.proto"
 
-func (i *arrFlags) String() string {
-	return ""
-}
-
-func (i *arrFlags) Set(value string) error {
-	*i = append(*i, value)
-	return nil
-}
-
-var (
-	filter       = flag.String("filter", "", "Filter by struct names. Case insensitive.")
-	targetFolder = flag.String("f", ".", "Protobuf output file path.")
-	pkgFlags     arrFlags
-)
-
 func main() {
-	flag.Var(&pkgFlags, "p", `Fully qualified path of packages to analyse. Relative paths ("./example/in") are allowed.`)
-	flag.Parse()
-
 	pwd, err := os.Getwd()
 	if err != nil {
 		log.Fatalf("error getting working directory: %s", err)
 	}
+
+	filter, targetFolder, pkgFlags := cli.ParseFlag()
 
 	if len(pkgFlags) == 0 {
 		flag.PrintDefaults()
